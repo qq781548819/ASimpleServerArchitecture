@@ -25,6 +25,6 @@ exports.auth = function(req, res) {
         access_token: authToken,
         expires_in: '1h', //'1h'
         token_type: 'json web token',
-        scope: null
+        scope: 'all scope'
     });
 }
