@@ -7,15 +7,28 @@
   },
   "dependencies": {
     "body-parser": "~1.17.1",
+    "connect-history-api-fallback": "^1.3.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.3",
     "express": "~4.15.2",
     "express-jwt": "^5.3.0",
+    "express-winston": "^2.4.0",
     "jade": "~1.11.0",
     "jsonwebtoken": "^7.4.1",
     "mongoose": "^4.11.7",
     "morgan": "~1.8.1",
+    "multiparty": "^4.1.3",
     "mysql": "^2.13.0",
-    "serve-favicon": "~2.4.2"
+    "pug": "^2.0.0-rc.3",
+    "serve-favicon": "~2.4.2",
+    "winston": "^2.3.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-es2015-classes": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
+    "babel-plugin-transform-export-extensions": "^6.22.0",
+    "babel-preset-stage-3": "^6.24.1"
   }
 }

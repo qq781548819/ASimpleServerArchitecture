@@ -1,9 +1,12 @@
-var express = require('express');
-var router = express.Router();
+'use strict';
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+import auth from './auth'
+import user from './users'
+import view from './view'
 
-module.exports = router;
+
+export default app => {
+  app.use('/auth', auth)
+  app.use('/user', user)
+  app.use('/', view)
+}

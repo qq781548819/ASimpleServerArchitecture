@@ -1,30 +1,28 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var expressJwt = require('express-jwt');
-
-
-var index = require('./routes/index');
-var users = require('./routes/users');
-var auth = require('./routes/auth');
+import express from 'express';
+import router from './routes/index.js';
+import path from 'path';
+import favicon from 'serve-favicon';
+import logger from 'morgan';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
+import expressJwt from 'express-jwt';
+import winston from 'winston';
+import expressWinston from 'express-winston';
+import history from 'connect-history-api-fallback';
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 
 app.use(expressJwt({
@@ -49,6 +47,7 @@ app.all('*', function(req, res, next) {
     res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
     res.setHeader('Content-Type', 'text/html;charset=UTF-8');
     // res.setHeader('content-type', 'text/html;charset=gb2312');
+	res.header("X-Powered-By", '3.2.1')
     if (req.method == 'OPTIONS') {
         res.send(200);
     } else {
@@ -56,11 +55,31 @@ app.all('*', function(req, res, next) {
     }
 });
 
+app.use(expressWinston.logger({
+    transports: [
+        new (winston.transports.Console)({
+          json: true,
+          colorize: true
+        }),
+        new winston.transports.File({
+          filename: 'logs/success.log'
+        })
+    ]
+}));
 
-app.use('/', index);
-app.use('/users', users);
-app.use('/auth', auth);
+router(app);
 
+app.use(expressWinston.errorLogger({
+    transports: [
+        new winston.transports.Console({
+          json: true,
+          colorize: true
+        }),
+        new winston.transports.File({
+          filename: 'logs/error.log'
+        })
+    ]
+}));
 
 app.use(function(err, req, res, next) {
     if (err.name === "UnauthorizedError") {
@@ -86,6 +105,7 @@ app.use(function(err, req, res, next) {
     res.render('error');
 });
 
+app.use(history());
 
 
 module.exports = app;

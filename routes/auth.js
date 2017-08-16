@@ -1,7 +1,12 @@
-var express = require('express');
-var router = express.Router();
-var c_auth = require('../controller/c_auth');
+import express from 'express';
+import Auth from '../controller/auth'
+const router = express.Router();
+
 
 //用户账号密码授权token
-router.get('/', c_auth.auth);
-module.exports = router;
+router.get('/', Auth.auth);
+
+
+
+
+export default router;

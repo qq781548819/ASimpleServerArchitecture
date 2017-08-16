@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-
+require('babel-core/register');
 var app = require('../app');
 var debug = require('debug')('asampleserverarchitecture:server');
 var http = require('http');
