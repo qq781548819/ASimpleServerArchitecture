@@ -9,6 +9,7 @@ import expressJwt from 'express-jwt';
 import winston from 'winston';
 import expressWinston from 'express-winston';
 import history from 'connect-history-api-fallback';
+import config from 'config-lite';
 
 var app = express();
 
@@ -89,7 +90,7 @@ app.use(function(err, req, res, next) {
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-    var err = new Error('Not Found');
+    var err = new Error('未找到当前路由');
     err.status = 404;
     next(err);
 });
@@ -108,4 +109,6 @@ app.use(function(err, req, res, next) {
 app.use(history());
 
 
-module.exports = app;
+app.listen(config.port);
+
+// module.exports = app;
