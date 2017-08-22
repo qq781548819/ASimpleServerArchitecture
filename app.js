@@ -109,6 +109,6 @@ app.use(function(err, req, res, next) {
 app.use(history());
 
 
-app.listen(config.port);
+app.listen(8000);
 
 // module.exports = app;
