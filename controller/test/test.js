@@ -5,6 +5,7 @@ import UserModel from '../../models/user/user'
 
 import request from 'request'
 
+import _ from 'lodash';
 
 class User {
     // constructor() {}
@@ -76,7 +77,10 @@ class User {
                     data: error
                 })
             } else {
-                res.send(body)
+                res.send({
+                    body,
+                    random: _.random(15, 20)
+                })
             }
         });
     }
