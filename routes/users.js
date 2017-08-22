@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var mysql = require('../config/mysql');
+var mysql = require('../mysql/mysql');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {

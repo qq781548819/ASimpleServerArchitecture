@@ -1,6 +1,6 @@
 'use strict';
 
-var mysql = require('../config/mysql');
+var mysql = require('../mysql/mysql');
 var jwt = require("jsonwebtoken");
 
 exports.auth = function (req, res) {

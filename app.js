@@ -1,4 +1,5 @@
 import express from 'express';
+import db from './mongodb/db.js';
 import router from './routes/index.js';
 import path from 'path';
 import favicon from 'serve-favicon';
@@ -9,7 +10,8 @@ import expressJwt from 'express-jwt';
 import winston from 'winston';
 import expressWinston from 'express-winston';
 import history from 'connect-history-api-fallback';
-import config from 'config-lite';
+import jwtAuth from './middleware/jwtAuth';
+const config = require('config-lite')(__dirname);//获取默认配置文件
 
 var app = express();
 
@@ -19,36 +21,27 @@ app.set('view engine', 'pug');
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+// app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use(expressJwt({
-    //jwt密钥，要保证授权密钥与鉴权密钥相同
-    secret: 'laikunqidagege',
-    //是否开启token鉴权
-    credentialsRequired: true,
-    //扩展token获取方案
-    getToken: function fromHeaderOrQuerystring(req) {
-        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-            return req.headers.authorization.split(' ')[1];
-        } else if (req.query && req.query.token) {
-            return req.query.token;
-        }
-        return null;
-    }
-}).unless({ path: ["/auth","/"] }));
-
-app.all('*', function(req, res, next) {
+//设置header
+app.all('*', function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
     res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
     res.setHeader('Content-Type', 'text/html;charset=UTF-8');
     // res.setHeader('content-type', 'text/html;charset=gb2312');
-	res.header("X-Powered-By", '3.2.1')
+    res.header("X-Powered-By", '3.2.1')
+    console.log(`query参数：${JSON.stringify(req.query)}`)
+    console.log(`body参数：${JSON.stringify(req.body)}`)
+    console.log(`params参数：${JSON.stringify(req.params)}`)
+    console.log(`------------------------------------------------------------------`)
     if (req.method == 'OPTIONS') {
         res.send(200);
     } else {
@@ -56,47 +49,63 @@ app.all('*', function(req, res, next) {
     }
 });
 
+//用户鉴权中间件
+app.use(jwtAuth);
+
+
 app.use(expressWinston.logger({
     transports: [
-        new (winston.transports.Console)({
-          json: true,
-          colorize: true
-        }),
+        //关闭日志loger打印
+        // new(winston.transports.Console)({
+        //     json: true,
+        //     colorize: true
+        // }),
         new winston.transports.File({
-          filename: 'logs/success.log'
+            filename: 'logs/success.log'
         })
     ]
 }));
 
 router(app);
 
+//日志记录中间件
 app.use(expressWinston.errorLogger({
     transports: [
-        new winston.transports.Console({
-          json: true,
-          colorize: true
-        }),
+        // new winston.transports.Console({
+        //     json: true,
+        //     colorize: true
+        // }),
         new winston.transports.File({
-          filename: 'logs/error.log'
+            filename: 'logs/error.log'
         })
     ]
 }));
 
-app.use(function(err, req, res, next) {
+
+//401鉴权失败返回提示码
+app.use(function (err, req, res, next) {
     if (err.name === "UnauthorizedError") {
-        res.status(401).send("invalid token，无效token，请校验");
+        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+            req.headers.authorization.split(' ')[1];
+            res.status(401).send("token过期，请重新获取token");
+        } else if (req.query && req.query.token) {
+            req.query.token;
+            res.status(401).send("token过期，请重新获取token");
+        } else {
+            res.status(401).send("请提交授权的token值，进行用户鉴权校验，感谢您的访问!!!!");
+        }
     }
 });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     var err = new Error('未找到当前路由');
     err.status = 404;
     next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -109,6 +118,6 @@ app.use(function(err, req, res, next) {
 app.use(history());
 
 
-app.listen(8000);
+app.listen(config.port);
 
 // module.exports = app;

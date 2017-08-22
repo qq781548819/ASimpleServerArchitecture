@@ -8,8 +8,8 @@ const mysql = require('mysql');
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password: 'laikunqi5280',
-    database: 'today_sign'
+    password: '001128',
+    database: 'asimple'
 });
 
 var query = function(sql, callback) {
