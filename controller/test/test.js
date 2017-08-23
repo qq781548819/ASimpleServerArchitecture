@@ -57,10 +57,7 @@ class User {
                     message: '该用户名已经被注册了，请重新提交用户名',
                 })
             }
-
         })
-
-
     }
 
     //使用request转发http请求
@@ -83,6 +80,12 @@ class User {
                 })
             }
         });
+    }
+    //测试websocket
+    testSocketIo(req, res, next) {
+        let text = req.body.text;
+        res.io.emit("socketToMe", `测试socketio链接实时传输:${text}`);
+        res.send(`socketio传输成功！！:${text}`);
     }
 }
 

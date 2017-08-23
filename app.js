@@ -11,13 +11,36 @@ import winston from 'winston';
 import expressWinston from 'express-winston';
 import history from 'connect-history-api-fallback';
 import jwtAuth from './middleware/jwtAuth';
-const config = require('config-lite')(__dirname);//获取默认配置文件
-
+const config = require('config-lite')(__dirname); //获取默认配置文件
+//socket.io鉴权库
+var socketioJwt = require('socketio-jwt');
 var app = express();
+
+//socket.io
+var server = require('http').Server(app);
+var sio = require('socket.io')(server);
+
+
+// sio.set('authorization', socketioJwt.authorize({
+//     secret: 'laikunqidagege',
+//     handshake: true
+// }));
+// //上述JWT用密钥 jwtSecret 签名加密。
+// sio.sockets
+//     .on('connection', function (socket) {
+//         console.log(socket.handshake.decoded_token.email, 'connected');
+//         //socket.on('event');
+//     });
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+app.use(function (req, res, next) {
+    res.io = sio;
+    next();
+});
+
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -118,6 +141,6 @@ app.use(function (err, req, res, next) {
 app.use(history());
 
 
-app.listen(config.port);
+server.listen(config.port);
 
 // module.exports = app;

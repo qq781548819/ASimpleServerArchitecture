@@ -10,7 +10,6 @@ const router = express.Router();
 //用户账号密码授权token
 router.post('/add', Test.addUser);
 router.post('/req',Test.requestData);
-
-
+router.post('/socket',Test.testSocketIo);
 
 export default router;

@@ -31,6 +31,8 @@
     "redis": "^2.8.0",
     "request": "^2.81.0",
     "serve-favicon": "~2.4.2",
+    "socket.io": "^2.0.3",
+    "socketio-jwt": "^4.5.0",
     "time-stamp": "^2.0.0",
     "timeago.js": "^3.0.2",
     "winston": "^2.3.1"
