@@ -12,34 +12,44 @@ import expressWinston from 'express-winston';
 import history from 'connect-history-api-fallback';
 import jwtAuth from './middleware/jwtAuth';
 const config = require('config-lite')(__dirname); //获取默认配置文件
-//socket.io鉴权库
-var socketioJwt = require('socketio-jwt');
+
 var app = express();
 
 //socket.io
 var server = require('http').Server(app);
-var sio = require('socket.io')(server);
+
+var io = require('socket.io')(server);
+var socketioJwt = require('socketio-jwt'); //socket.io鉴权库
 
 
-// sio.set('authorization', socketioJwt.authorize({
-//     secret: 'laikunqidagege',
-//     handshake: true
-// }));
-// //上述JWT用密钥 jwtSecret 签名加密。
-// sio.sockets
-//     .on('connection', function (socket) {
-//         console.log(socket.handshake.decoded_token.email, 'connected');
-//         //socket.on('event');
-//     });
+io.use(socketioJwt.authorize({ //// With socket.io >= 1.0 ////
+    secret: 'laikunqidagege',
+    handshake: true
+}));
+
+
+io.on('connection', function (socket) {
+    // in socket.io < 1.0
+    console.log('hello!', socket.handshake.decoded_token.name);
+
+    // in socket.io 1.0
+    console.log('hello! ', socket.decoded_token.name);
+}).on('authenticated', function (socket) {
+    //this socket is authenticated, we are good to handle more events from it.
+
+    console.log('hello! ' + socket.decoded_token.name);
+});
+
+// app.use(function (req, res, next) {
+//     res.io = io;
+//     next();
+// });
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.use(function (req, res, next) {
-    res.io = sio;
-    next();
-});
+
 
 
 // uncomment after placing your favicon in /public

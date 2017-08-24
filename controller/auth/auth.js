@@ -1,9 +1,10 @@
-'use strict';
+"use strict";
 
 var mysql = require('../../mysql/mysql');
 var jwt = require("jsonwebtoken");
 
 exports.auth = function (req, res) {
+    
     let username = req.query.username || req.body.username;
     let psw = req.query.psw || req.body.psw;
     console.log('username:' + username + ',psw:' + psw);
