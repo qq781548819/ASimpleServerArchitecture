@@ -74,10 +74,12 @@ class User {
                     data: error
                 })
             } else {
-                res.send({
-                    body,
+                res.send(body)
+                /** {
+                    result:body,
                     random: _.random(15, 20)
-                })
+                }
+                */
             }
         });
     }

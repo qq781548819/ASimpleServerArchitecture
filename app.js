@@ -22,28 +22,28 @@ var io = require('socket.io')(server);
 var socketioJwt = require('socketio-jwt'); //socket.io鉴权库
 
 
-io.use(socketioJwt.authorize({ //// With socket.io >= 1.0 ////
-    secret: 'laikunqidagege',
-    handshake: true
-}));
+// io.use(socketioJwt.authorize({ //// With socket.io >= 1.0 ////
+//     secret: 'laikunqidagege',
+//     handshake: true
+// }));
 
 
-io.on('connection', function (socket) {
-    // in socket.io < 1.0
-    console.log('hello!', socket.handshake.decoded_token.name);
+// io.on('connection', function (socket) {
+//     // in socket.io < 1.0
+//     console.log('hello!', socket.handshake.decoded_token.name);
 
-    // in socket.io 1.0
-    console.log('hello! ', socket.decoded_token.name);
-}).on('authenticated', function (socket) {
-    //this socket is authenticated, we are good to handle more events from it.
+//     // in socket.io 1.0
+//     console.log('hello! ', socket.decoded_token.name);
+// }).on('authenticated', function (socket) {
+//     //this socket is authenticated, we are good to handle more events from it.
 
-    console.log('hello! ' + socket.decoded_token.name);
-});
-
-// app.use(function (req, res, next) {
-//     res.io = io;
-//     next();
+//     console.log('hello! ' + socket.decoded_token.name);
 // });
+
+app.use(function (req, res, next) {
+    res.io = io;
+    next();
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

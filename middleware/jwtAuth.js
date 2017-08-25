@@ -19,7 +19,8 @@ export default expressJwt({
         return null;
     }
 }).unless({
-    path: ["/auth", "/"]//, '/test'
+    path: ["/auth", "/",'/auth/token'],//, '/test'
+    ext:['.ico'],
 })
 
 

@@ -4,7 +4,7 @@ const router = express.Router();
 
 
 //用户账号密码授权token
-router.get('/', Auth.auth);
+router.get('/token', Auth.auth);
 
 
 
